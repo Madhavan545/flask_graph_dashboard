@@ -4,6 +4,7 @@ Created on Tue Apr  5 08:05:50 2022
 
 @author: ELCOT
 """
+import dash
 from flask import Flask
 import pandas as pd # creating and manipulating dataframes
 import plotly.graph_objects as go # we can not use express plots
@@ -13,8 +14,9 @@ from plotly.subplots import make_subplots # creating subplots
 # grouped_df = df.groupby(['sex', 'day'], as_index=False).sum()
 # grouped_df.head()
 
+
+app = dash.Dash(__name__)
 df = pd.read_csv("vgsales.csv")
-app = Flask("__main__")
 
 # df = pd.DataFrame({'world_rank': [1, 2, 3, 4, 5],
                     # 'university_name': ['Harvard', 'MIT', 'Stanford', 'Cambridge', 'Oxford'],
@@ -23,30 +25,30 @@ app = Flask("__main__")
 # print(grouped_df)
 
 # print(df)
-@app.route("/")
-def home():
+# @app.route("/")
+# def home():
 
-    fig = make_subplots(rows=2, cols=2,specs=[[{"type": "xy"}, {"type": "xy"}],
+fig = make_subplots(rows=2, cols=2,specs=[[{"type": "xy"}, {"type": "xy"}],
                [{"type": "domain"}, {"type": "domain"}]],subplot_titles=('Teams&Members','Productivity','sales/month','Best Team'))
     
-    # # add the 1st graph by specifying which row and column it will come to
-    fig.add_trace(go.Bar(x=df['Teams'], y=df['Members'],name='Members/team'),row=1, col=1)
-    # # add the 2nd graph
-    fig.add_trace(go.Scatter(x=df['Teams'], y=df['Productivity'],name='Productivity/Team'), row=1, col=2)
-    
-    fig.add_trace(go.Pie(values=df['Total_Sales'],labels=df['Teams']),row=2, col=1)
-    
-    fig.add_trace(go.Pie(values=df['Productivity'],labels=df['Teams'],pull=[0, 0, 0.2, 0,0,0,0,0,0,0]),row=2, col=2)
-    
+# # add the 1st graph by specifying which row and column it will come to
+fig.add_trace(go.Bar(x=df['Teams'], y=df['Members'],name='Members/team'),row=1, col=1)
+# # add the 2nd graph
+fig.add_trace(go.Scatter(x=df['Teams'], y=df['Productivity'],name='Productivity/Team'), row=1, col=2)
 
+fig.add_trace(go.Pie(values=df['Total_Sales'],labels=df['Teams']),row=2, col=1)
 
-
-    # figure=fig.show()
-    return fig
+fig.add_trace(go.Pie(values=df['Productivity'],labels=df['Teams'],pull=[0, 0, 0.2, 0,0,0,0,0,0,0]),row=2, col=2)
     
 
-if __name__=="__main__":
-    app.run()
+fig.show()
+
+#     # figure=fig.show()
+# return fig
+    
+
+if __name__ == '__main__':
+   app.run_server(debug=True)
 
 
 
